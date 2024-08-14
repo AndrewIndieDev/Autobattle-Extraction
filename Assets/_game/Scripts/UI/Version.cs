@@ -7,6 +7,6 @@ public class Version : MonoBehaviour
 
     void Start()
     {
-        version.text = $"v{Application.version}";
+        version.text = $"{Application.version}";
     }
 }

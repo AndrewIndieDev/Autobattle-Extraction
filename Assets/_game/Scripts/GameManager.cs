@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
         DontDestroyOnLoad(this);
-        mainInventory = new Inventory(10);
+        mainInventory = new Inventory(204);
     }
 
     private void Update()

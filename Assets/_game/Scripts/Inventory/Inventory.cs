@@ -5,7 +5,9 @@ using UnityEngine;
 [Serializable]
 public class Inventory
 {
-    public Action OnInventoryChanged;
+    public Action<InventoryItem> OnInventoryUpdatedCount;
+    public Action<InventoryItem> OnInventoryAddItem;
+    public Action<InventoryItem> OnInventoryRemoveItem;
     
     public List<InventoryItem> Items => items;
     [SerializeField] private List<InventoryItem> items = new();
@@ -23,15 +25,23 @@ public class Inventory
         items.AddRange(copyFrom.Items);
     }
 
-    public bool AddItem(InventoryItem item)
+    public bool AddItem(InventoryItem item, int count = 1)
     {
-        if (!InventoryHasSpaceFor(item, out InventoryItem foundReference))
-            return false;
-        if (foundReference != null)
-            foundReference.AddCount(item.Count);
-        else
-            items.Add(item);
-        OnInventoryChanged?.Invoke();
+        for (int i = 0; i < count; i++)
+        {
+            if (!InventoryHasSpaceFor(item, out InventoryItem foundReference))
+                return false;
+            if (foundReference != null)
+            {
+                foundReference.AddCount(item.Count);
+                OnInventoryUpdatedCount?.Invoke(foundReference);
+            }
+            else
+            {
+                items.Add(item);
+                OnInventoryAddItem?.Invoke(item);
+            }
+        }
         return true;
     }
 
@@ -40,7 +50,15 @@ public class Inventory
         if (!items.Contains(item)) return false;
         if (!inventory.AddItem(item)) return false;
         items.Remove(item);
-        OnInventoryChanged?.Invoke();
+        OnInventoryRemoveItem?.Invoke(item);
+        return true;
+    }
+
+    public bool RemoveItem(InventoryItem item)
+    {
+        if (!items.Contains(item)) return false;
+        items.Remove(item);
+        OnInventoryRemoveItem?.Invoke(item);
         return true;
     }
 
