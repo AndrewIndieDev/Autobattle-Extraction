@@ -41,12 +41,14 @@ public class InventorySlotVisual : MonoBehaviour, IDragHandler, IEndDragHandler
     public void OnDrag(PointerEventData eventData)
     {
         if (IsFree) return;
+        if (eventData.button != PointerEventData.InputButton.Left) return;
         Icon.transform.position = eventData.position;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         if (IsFree) return;
+        if (eventData.button != PointerEventData.InputButton.Left) return;
         ResetIcon();
 
         InventorySlotVisual hoveredSlot = eventData.pointerCurrentRaycast.gameObject?.GetComponent<InventorySlotVisual>();
@@ -60,7 +62,6 @@ public class InventorySlotVisual : MonoBehaviour, IDragHandler, IEndDragHandler
             //    {
             //        int count = Item.Count / 2; // currently it is flooring the value if it's odd.
             //        if (count <= 0) return;
-            //        Debug.Log(count);
             //        InventoryItem halfStack = new InventoryItem(Item.Name, Item.Icon, Item.Cost, count);
             //        hoveredSlot.SetItem(halfStack);
             //        Item.AddCount(-count);
